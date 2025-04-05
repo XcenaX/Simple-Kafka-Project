@@ -52,4 +52,4 @@ docker compose down
 
 ---
 
-Built for learning Kafka, microservices, and container orchestration 🚀
+Built for learning Kafka, microservices, and container orchestration
