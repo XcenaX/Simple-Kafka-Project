@@ -1,0 +1,39 @@
+services:
+  - name: gps-tracker
+    type: web
+    env: docker
+    repo: https://github.com/XcenaX/Simple-Kafka-Project
+    dockerfilePath: ./gps-tracker/Dockerfile
+    autoDeploy: true
+    plan: free
+    envVars:
+      - key: KAFKA_BOOTSTRAP_SERVERS
+        value: kafka:9092
+    buildCommand: ""
+    startCommand: "uvicorn app:app --host 0.0.0.0 --port 8000"
+
+  - name: eta-calculator
+    type: web
+    env: docker
+    repo: https://github.com/XcenaX/Simple-Kafka-Project
+    dockerfilePath: ./eta-calculator/Dockerfile
+    autoDeploy: true
+    plan: free
+    envVars:
+      - key: KAFKA_BOOTSTRAP_SERVERS
+        value: kafka:9092
+    buildCommand: ""
+    startCommand: "uvicorn app:app --host 0.0.0.0 --port 8000"
+
+  - name: notifier
+    type: web
+    env: docker
+    repo: https://github.com/XcenaX/Simple-Kafka-Project
+    dockerfilePath: ./notifier/Dockerfile
+    autoDeploy: true
+    plan: free
+    envVars:
+      - key: KAFKA_BOOTSTRAP_SERVERS
+        value: kafka:9092
+    buildCommand: ""
+    startCommand: "uvicorn app:app --host 0.0.0.0 --port 8000"

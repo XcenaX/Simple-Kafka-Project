@@ -52,16 +52,26 @@ docker compose down
 
 ## Deploying to Production
 
-To deploy using `docker-compose.prod.yaml`:
+To deploy using Render and `render.yaml`:
 
-1. Make sure to replace `xcenax` with **your Docker Hub username** in the image names.
-2. Push your Docker images to Docker Hub:
+1. Replace `xcenax` in Docker image names with **your Docker Hub username**
+2. Replace the GitHub repo URL in `render.yaml` with **your own GitHub repo**, for example:
+
+```yaml
+repo: https://github.com/yourusername/your-repo-name
+```
+
+3. Push Docker images to Docker Hub:
+
 ```bash
 docker build -t yourusername/gps-tracker:latest ./gps-tracker
 docker push yourusername/gps-tracker:latest
 # Repeat for eta-calculator and notifier
 ```
-3. Use the `docker-compose.prod.yaml` on your hosting platform (Render, etc.)
+
+4. Commit and push `render.yaml` to your GitHub repo
+5. Go to [https://render.com](https://render.com), click **New + → Blueprint**
+6. Select your repo and Render will deploy everything
 
 ---
 
