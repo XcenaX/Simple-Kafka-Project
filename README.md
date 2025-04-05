@@ -16,13 +16,13 @@ gps-tracker (FastAPI)
 
 1. Clone the repository
 2. Make sure Docker and Docker Compose are installed
-3. Start everything:
+3. Start everything locally:
 
 ```bash
 docker compose up --build
 ```
 
-## 🔗 Services Overview
+## Services Overview
 
 | Service         | URL                        | Swagger UI           |
 |-----------------|----------------------------|-----------------------|
@@ -37,7 +37,7 @@ docker compose up --build
 - Apache Kafka + Zookeeper
 - Docker & Docker Compose
 
-## How to Test
+## How to Test Locally
 
 1. Open Swagger UI: [http://localhost:8000/docs](http://localhost:8000/docs)
 2. Trigger `/send-gps` in `gps-tracker`
@@ -50,12 +50,19 @@ docker compose up --build
 docker compose down
 ```
 
-## Todo / Roadmap
+## Deploying to Production
 
-- [ ] Push Docker images to Docker Hub
-- [ ] Deploy to cloud (Kubernetes, Render, Railway, etc.)
-- [ ] Add a frontend (React/Vue dashboard)
+To deploy using `docker-compose.prod.yaml`:
+
+1. Make sure to replace `xcenax` with **your Docker Hub username** in the image names.
+2. Push your Docker images to Docker Hub:
+```bash
+docker build -t yourusername/gps-tracker:latest ./gps-tracker
+docker push yourusername/gps-tracker:latest
+# Repeat for eta-calculator and notifier
+```
+3. Use the `docker-compose.prod.yaml` on your hosting platform (Render, etc.)
 
 ---
 
-Built for learning Kafka, microservices, and container orchestration
+Built for learning Kafka, microservices, and container orchestration 🚀
