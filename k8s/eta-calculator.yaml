@@ -1,0 +1,19 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eta-calculator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eta-calculator
+  template:
+    metadata:
+      labels:
+        app: eta-calculator
+    spec:
+      containers:
+      - name: eta-calculator
+        image: eta-calculator:latest
+        imagePullPolicy: Never

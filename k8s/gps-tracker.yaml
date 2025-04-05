@@ -1,0 +1,19 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gps-tracker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gps-tracker
+  template:
+    metadata:
+      labels:
+        app: gps-tracker
+    spec:
+      containers:
+      - name: gps-tracker
+        image: gps-tracker:latest
+        imagePullPolicy: Never

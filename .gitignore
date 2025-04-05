@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+env/
+venv/
+*.sqlite3
+
+# Virtualenv
+.venv/
+ENV/
+
+# VSCode
+.vscode/
+
+# Docker
+*.log
+*.pid
+*.tar
+*.sock
+*.db
+.dockerignore
+docker-compose.override.yml
+
+# PyCharm
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Kubernetes configs or cache
+*.yaml~

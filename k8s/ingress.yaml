@@ -1,0 +1,32 @@
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gps-eta-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /gps(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: gps-tracker
+            port:
+              number: 8000
+      - path: /eta(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: eta-calculator
+            port:
+              number: 8000
+      - path: /notify(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: notifier
+            port:
+              number: 8000
