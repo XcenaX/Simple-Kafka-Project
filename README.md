@@ -1,78 +1,87 @@
-# GPS ETA Notifier (FastAPI + Kafka + Docker)
+# Simple Kafka Microservices with FastAPI + Kubernetes
 
-A simple educational microservices project where three services interact via Kafka.
-
-## Architecture
-
-```
-gps-tracker (FastAPI)
-   └──> Kafka Topic "gps"
-         └──> eta-calculator (FastAPI)
-                └──> Kafka Topic "eta"
-                       └──> notifier (FastAPI)
-```
-
-## Quick Start (Local)
-
-1. Clone the repository
-2. Make sure Docker and Docker Compose are installed
-3. Start everything locally:
-
-```bash
-docker compose up --build
-```
-
-## Services Overview
-
-| Service         | URL                        | Swagger UI           |
-|-----------------|----------------------------|-----------------------|
-| gps-tracker     | http://localhost:8000      | `/docs` (`/send-gps`) |
-| eta-calculator  | http://localhost:8001      | `/docs` (`/calculate`) |
-| notifier        | http://localhost:8002      | `/docs` (`/notify`)   |
-
-## Stack
-
-- Python 3.11
-- FastAPI
-- Apache Kafka + Zookeeper
-- Docker & Docker Compose
-
-## How to Test Locally
-
-1. Open Swagger UI: [http://localhost:8000/docs](http://localhost:8000/docs)
-2. Trigger `/send-gps` in `gps-tracker`
-3. ETA is calculated automatically by `eta-calculator`
-4. `notifier` service will print the notification to console
-
-## Shutdown
-
-```bash
-docker compose down
-```
-
-## Deploying to Production
-
-To deploy using Render and `render.yaml`:
-
-1. Replace `xcenax` in Docker image names with **your Docker Hub username**
-2. Replace the GitHub repo URL in `render.yaml` with **your own GitHub repo**, for example:
-
-```yaml
-repo: https://github.com/yourusername/your-repo-name
-```
-
-3. Push Docker images to Docker Hub:
-
-```bash
-docker build -t yourusername/gps-tracker:latest ./gps-tracker
-docker push yourusername/gps-tracker:latest
-# Repeat for eta-calculator and notifier
-```
-
-4. Commit and push `render.yaml` to your GitHub repo
-5. Go to [https://render.com](https://render.com), click **New + → Blueprint**
-6. Select your repo and Render will deploy everything
+This project is a demonstration of an event-driven architecture using **FastAPI**, **Apache Kafka**, and **Kubernetes (Minikube)**.
 
 ---
 
-Built for learning Kafka, microservices, and container orchestration 🚀
+## Microservices
+
+| Service         | Description                          | Kafka Topic |
+|----------------|--------------------------------------|-------------|
+| `gps-tracker`  | Sends GPS location events            | `gps`       |
+| `eta-calculator` | Calculates ETA from GPS             | `eta`       |
+| `notifier`     | Receives ETA and logs notification   | –           |
+
+---
+
+## Stack
+
+- Python + FastAPI
+- Kafka + Zookeeper (Bitnami)
+- Docker & Docker Hub
+- Kubernetes via Minikube
+- Ingress + Swagger UI
+
+---
+
+## Endpoints (via Ingress)
+
+| URL                          | Service         |
+|-----------------------------|-----------------|
+| `http://gps.local/gps/docs` | `gps-tracker`   |
+| `http://gps.local/eta/docs` | `eta-calculator`|
+| `http://gps.local/notify/docs` | `notifier`     |
+
+> ℹ️ Add `gps.local` etc. to your `/etc/hosts` mapped to `minikube ip`
+
+```
+192.168.xx.xx gps.local
+192.168.xx.xx eta.local
+192.168.xx.xx notify.local
+```
+
+---
+
+## How to Run (Minikube)
+
+1. Enable ingress:
+```bash
+minikube addons enable ingress
+```
+
+2. Apply manifests:
+```bash
+kubectl apply -f zookeeper.yaml
+kubectl apply -f kafka.yaml
+kubectl apply -f gps-tracker-deployment.yaml
+kubectl apply -f eta-calculator-deployment.yaml
+kubectl apply -f notifier-deployment.yaml
+kubectl apply -f ingress.yaml
+```
+
+3. Add `hosts` entries using `minikube ip`.
+
+4. Open Swagger and test:
+- POST `/send-gps` → triggers GPS event
+- ETA gets calculated and forwarded
+- Notifier logs ETA
+
+---
+
+## Docker Images
+
+Images are hosted on Docker Hub under:
+
+```
+xcenax/gps-tracker
+xcenax/eta-calculator
+xcenax/notifier
+```
+
+> Replace `xcenax` with your Docker Hub username if you fork this repo.
+
+---
+
+## Credits
+
+Built with ❤️ and caffeine by a true Kubernetes Enjoyer.

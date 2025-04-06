@@ -1,13 +1,13 @@
 
 from fastapi import FastAPI
 from kafka import KafkaProducer
-import json
+import json, os
 
-app = FastAPI(title="GPS Tracker Service")
+app = FastAPI(root_path="/gps")
 
 producer = KafkaProducer(
-    bootstrap_servers='kafka:9092',
-    value_serializer=lambda v: json.dumps(v).encode('utf-8')
+    bootstrap_servers=os.getenv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9092"),
+    value_serializer=lambda v: json.dumps(v).encode("utf-8")
 )
 
 @app.post("/send-gps")

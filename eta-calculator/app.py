@@ -1,20 +1,20 @@
 
 from fastapi import FastAPI, Body
 from kafka import KafkaConsumer, KafkaProducer
-import threading, json, random
+import threading, json, random, os
 
-app = FastAPI(title="ETA Calculator Service")
+app = FastAPI(root_path="/eta")
 
 consumer = KafkaConsumer(
     'gps',
-    bootstrap_servers='kafka:9092',
+    bootstrap_servers=os.getenv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9092"),
     group_id='eta-group',
-    value_deserializer=lambda m: json.loads(m.decode('utf-8'))
+    value_deserializer=lambda m: json.loads(m.decode("utf-8"))
 )
 
 producer = KafkaProducer(
-    bootstrap_servers='kafka:9092',
-    value_serializer=lambda v: json.dumps(v).encode('utf-8')
+    bootstrap_servers=os.getenv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9092"),
+    value_serializer=lambda v: json.dumps(v).encode("utf-8")
 )
 
 def calculate_eta(gps: dict) -> dict:
@@ -26,19 +26,18 @@ def calculate_eta(gps: dict) -> dict:
     return eta
 
 @app.post("/calculate")
-def manual_trigger(gps: dict = Body(...)):
+def manual(gps: dict = Body(...)):
     eta = calculate_eta(gps)
     producer.send("eta", eta)
     producer.flush()
-    return {"status": "calculated", "eta": eta}
+    return {"status": "sent", "eta": eta}
 
 def consume():
     for msg in consumer:
-        gps = msg.value
-        eta = calculate_eta(gps)
+        eta = calculate_eta(msg.value)
         producer.send("eta", eta)
         producer.flush()
 
 @app.on_event("startup")
-def start_consumer():
+def start():
     threading.Thread(target=consume, daemon=True).start()
